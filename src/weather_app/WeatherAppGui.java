@@ -44,17 +44,6 @@ public class WeatherAppGui extends JFrame {
 	}
 	
 	private void addGuiComponents() {
-		//Where the person is going to search sutff
-		JTextField searchTextField = new JTextField();
-		
-		//size of text field
-		searchTextField.setBounds(15, 15, 351, 45);
-		
-		//font
-		searchTextField.setFont(new Font("Dialog", Font.PLAIN, 24));
-		
-		add(searchTextField);
-		
 		//weather image
 		JLabel weatherConditionImage = new JLabel(loadImage("src/assets/cloudy.png"));
 		weatherConditionImage.setBounds(0, 125, 450, 217);
@@ -98,6 +87,25 @@ public class WeatherAppGui extends JFrame {
 		windspeedText.setFont(new Font("Dialog", Font.PLAIN, 16));
 		add(windspeedText);
 		
+		//Where the person is going to search sutff
+		JTextField searchTextField = new JTextField();
+				
+		//size of text field
+		searchTextField.setBounds(15, 15, 351, 45);
+				
+		//font
+		searchTextField.setFont(new Font("Dialog", Font.PLAIN, 24));
+				
+		searchTextField.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						searchWeather(searchTextField, weatherConditionImage, temperatureText, 
+								weatherConditionDesc, windspeedText, humidityText);
+					}
+				});
+				
+				add(searchTextField);
+		
 		//search Button
 		JButton searchButton = new JButton(loadImage("src/assets/search.png"));
 				
@@ -108,57 +116,13 @@ public class WeatherAppGui extends JFrame {
 		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//get location from user
-				String userInput = searchTextField.getText();
-				
-				//validate input - remove white space
-				if(userInput.replaceAll("\\s", "").length() <= 0) {
-					return;
-				}
-				
-				//retrieve weather data
-				weatherData = WeatherApp.getWeatherData(userInput);
-				
-				//update gui
-				
-				//update weather image
-				String weatherCondition = (String) weatherData.get("weather_condition");
-				
-				//depending on the condition, we will update the weather image that corresponds with the condition
-				switch(weatherCondition) {
-					case "Clear":
-						weatherConditionImage.setIcon(loadImage("src/assets/clear.png"));
-						break;
-					case "Cloudy":
-						weatherConditionImage.setIcon(loadImage("src/assets/cloudy.png"));
-						break;
-					case "Rain":
-						weatherConditionImage.setIcon(loadImage("src/assets/rain.png"));
-						break;
-					case "Snow":
-						weatherConditionImage.setIcon(loadImage("src/assets/snow.png"));
-						break;	
-				}
-				
-				//update temperature text
-				double temperature = (double) weatherData.get("temperature");
-				temperatureText.setText(temperature + " C°");
-				
-				//update weather condition text
-				weatherConditionDesc.setText(weatherCondition);
-				
-				//update humidity text
-				long humidity = (long) weatherData.get("humidity");
-				humidityText.setText("<html><b>Humidity</b> " + humidity + "%</html>");
-				
-				// Later update of the windspeed text
-				double windspeed = (double) weatherData.get("windspeed");
-				windspeedText.setText("<html><b>WindSpeed</b> "  + windspeed + "&nbsp;Km/h</html>");
-				
+				searchWeather(searchTextField, weatherConditionImage, temperatureText,
+						weatherConditionDesc, windspeedText, humidityText);
 			}			
 		});
 		
 		add(searchButton);
+
 	}
 	
 	private ImageIcon loadImage(String resourcePath) {
@@ -177,6 +141,56 @@ public class WeatherAppGui extends JFrame {
 		return null;
 		
 	}
-	
 
+	private void searchWeather(JTextField searchTextField, JLabel weatherConditionImage, 
+			JLabel temperatureText, JLabel weatherConditionDesc, JLabel windspeedText, JLabel humidityText) {
+		//get location from user
+		String userInput = searchTextField.getText();
+		
+		//validate input - remove white space
+		if(userInput.replaceAll("\\s", "").length() <= 0) {
+			return;
+		}
+		
+		//retrieve weather data
+		weatherData = WeatherApp.getWeatherData(userInput);
+		
+		//update gui
+		
+		//update weather image
+		String weatherCondition = (String) weatherData.get("weather_condition");
+		
+		//depending on the condition, we will update the weather image that corresponds with the condition
+		switch(weatherCondition) {
+			case "Clear":
+				weatherConditionImage.setIcon(loadImage("src/assets/clear.png"));
+				break;
+			case "Cloudy":
+				weatherConditionImage.setIcon(loadImage("src/assets/cloudy.png"));
+				break;
+			case "Rain":
+				weatherConditionImage.setIcon(loadImage("src/assets/rain.png"));
+				break;
+			case "Snow":
+				weatherConditionImage.setIcon(loadImage("src/assets/snow.png"));
+				break;	
+		}
+		
+		//update temperature text
+		double temperature = (double) weatherData.get("temperature");
+		temperatureText.setText(temperature + " C°");
+		
+		//update weather condition text
+		weatherConditionDesc.setText(weatherCondition);
+		
+		//update humidity text
+		long humidity = (long) weatherData.get("humidity");
+		humidityText.setText("<html><b>Humidity</b> " + humidity + "%</html>");
+		
+		// Later update of the windspeed text
+		double windspeed = (double) weatherData.get("windspeed");
+		windspeedText.setText("<html><b>WindSpeed</b> "  + windspeed + "&nbsp;Km/h</html>");
+		
+	}	
+	
 }
